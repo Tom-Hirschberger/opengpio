@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// This is an async runner for the lib, allowing node to execute long running tasks in a separate thread
+// This is an async runner for the lib, allowing node to execute long running syncronous tasks in a separate thread
 const lib_1 = __importDefault(require("./lib"));
 process.on('message', ([method, ...args]) => {
     if (method === 'watch') {

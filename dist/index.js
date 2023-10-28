@@ -29,3 +29,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.devices = void 0;
 exports.devices = __importStar(require("./devices"));
 __exportStar(require("./gpio"), exports);
+__exportStar(require("./i2c"), exports);

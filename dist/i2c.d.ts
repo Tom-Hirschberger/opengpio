@@ -1,6 +1,9 @@
+/// <reference types="node" />
 export declare class I2c {
-    private bus;
+    private busNumber;
     private address;
-    constructor(bus: number, address: number);
-    open(): void;
+    private bus;
+    constructor(busNumber: number, address: number);
+    write(data: Buffer): Promise<Buffer>;
+    read(data: Buffer): Promise<Buffer>;
 }

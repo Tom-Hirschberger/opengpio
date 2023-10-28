@@ -8,6 +8,7 @@ export enum Edge {
 }
 
 export class Gpio {
+    private child: ChildProcess | undefined = undefined;
     constructor(private device: Device, private pin: keyof Device['gpio']) { }
     private get raster(): Raster {
         return this.device.gpio[this.pin]
@@ -21,9 +22,10 @@ export class Gpio {
     }
 
     pwm(dutyCycle: number, frequency: number = 50): ChildProcess {
-        const child = fork(`${__dirname}/runner.js`);
-        child.send(['pwm', this.raster.chip, this.raster.line, dutyCycle, frequency]);
-        return child;
+        if(this.child) this.child.kill();
+        this.child = fork(`${__dirname}/runner.js`);
+        this.child.send(['pwm', this.raster.chip, this.raster.line, dutyCycle, frequency]);
+        return this.child;
     }
     
     pwmSync(dutyCycle: number, frequency: number = 50): void {
@@ -31,10 +33,11 @@ export class Gpio {
     }
 
     watch(callback: (value: boolean) => void, edge: Edge = Edge.Both): ChildProcess {
-        const child = fork(`${__dirname}/runner.js`);
-        child.send(['watch', this.raster.chip, this.raster.line, edge]);
-        child.on('message', callback);
-        return child;
+        if(this.child) this.child.kill();
+        this.child = fork(`${__dirname}/runner.js`);
+        this.child.send(['watch', this.raster.chip, this.raster.line, edge]);
+        this.child.on('message', callback);
+        return this.child;
     }
 
     watchSync(callback: (value: boolean) => void, edge: Edge = Edge.Both): void {

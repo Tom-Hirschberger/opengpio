@@ -8,6 +8,7 @@ export declare enum Edge {
 export declare class Gpio {
     private device;
     private pin;
+    private child;
     constructor(device: Device, pin: keyof Device['gpio']);
     private get raster();
     get(): boolean;

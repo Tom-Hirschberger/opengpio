@@ -16,6 +16,7 @@ class Gpio {
     constructor(device, pin) {
         this.device = device;
         this.pin = pin;
+        this.child = undefined;
     }
     get raster() {
         return this.device.gpio[this.pin];
@@ -27,18 +28,22 @@ class Gpio {
         lib_1.default.set(this.raster.chip, this.raster.line, value);
     }
     pwm(dutyCycle, frequency = 50) {
-        const child = (0, child_process_1.fork)(`${__dirname}/runner.js`);
-        child.send(['pwm', this.raster.chip, this.raster.line, dutyCycle, frequency]);
-        return child;
+        if (this.child)
+            this.child.kill();
+        this.child = (0, child_process_1.fork)(`${__dirname}/runner.js`);
+        this.child.send(['pwm', this.raster.chip, this.raster.line, dutyCycle, frequency]);
+        return this.child;
     }
     pwmSync(dutyCycle, frequency = 50) {
         lib_1.default.pwm(this.raster.chip, this.raster.line, dutyCycle, frequency);
     }
     watch(callback, edge = Edge.Both) {
-        const child = (0, child_process_1.fork)(`${__dirname}/runner.js`);
-        child.send(['watch', this.raster.chip, this.raster.line, edge]);
-        child.on('message', callback);
-        return child;
+        if (this.child)
+            this.child.kill();
+        this.child = (0, child_process_1.fork)(`${__dirname}/runner.js`);
+        this.child.send(['watch', this.raster.chip, this.raster.line, edge]);
+        this.child.on('message', callback);
+        return this.child;
     }
     watchSync(callback, edge = Edge.Both) {
         lib_1.default.watch(this.raster.chip, this.raster.line, edge, callback);
