@@ -1,12 +1,10 @@
 import binding from 'bindings';
-const bindings: {
-    init: () => void;
-} = binding('opengpio');
+const bindings: any = binding('opengpio');
+function callbackFromCPlusPlus(data:any) {
+console.log('Data from C++:', data);
+}
 
-setInterval(() => {}, 1000);
-
-bindings.init();
-console.log('init');
+bindings.init(callbackFromCPlusPlus);
 // import { devices } from './main';
 // import { Edge } from './types';
 
